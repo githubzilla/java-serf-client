@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  serf1:
+    image: tianxj/serf:v1
+    ports:
+      - "7946:7946"
+      - "7373:7373"
+
+  serf2:
+    image: tianxj/serf:v1
+    ports:
+      - "7947:7946"
+      - "7374:7373"

@@ -1,15 +1,16 @@
 FROM ubuntu:16.04
 MAINTAINER Tian XiaoJi <tianxiaoji@gmail.com>
 
-ADD ./serf-agent.conf ./
-ADD ./provision-in-docker.sh ./provision.sh
-
+#Install additional packages
 RUN apt-get update
-RUN apt-get --yes install sudo wget unzip
+RUN apt-get --yes install sudo wget unzip vim
 
-RUN chmod +x ./provision.sh
-RUN ./provision.sh
+#Install serf
+RUN wget -q https://releases.hashicorp.com/serf/0.8.1/serf_0.8.1_linux_amd64.zip
+RUN unzip serf_0.8.1_linux_amd64.zip
+RUN sudo mv serf /usr/local/bin/
+RUN rm serf_0.8.1_linux_amd64.zip
 
-EXPOSE 5000 7373
+EXPOSE 7946 7373
 
-CMD ["sudo", "start", "serf-agent"]
+CMD ["/bin/sh", "-c", "serf agent -bind=0.0.0.0:7946 -rpc-addr=0.0.0.0:7373 > /var/log/serf.log 2>&1"]

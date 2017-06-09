@@ -36,10 +36,10 @@ public class SerfClientIT {
     private static final String SERF2_RPC_IP = "localhost";
     private static final int SERF2_RPC_PORT = 7374;
     
-    private static final String SERF1_IP = "10.2.2.10";
+    private static final String SERF1_IP = "localhost";
     private static final int SERF1_PORT = 7946;
-    private static final String SERF2_IP = "10.2.2.11";
-    private static final int SERF2_PORT = 7946;
+    private static final String SERF2_IP = "localhost";
+    private static final int SERF2_PORT = 7947;
     
     private Client client1;
     private Client client2;
