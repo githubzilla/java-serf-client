@@ -19,6 +19,8 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Arne M. Størksen <arne.storksen@tv2.no>
  */
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SerfClientIT {
     
     private static final Logger logger = LoggerFactory.getLogger(SerfClientIT.class);
@@ -67,7 +71,7 @@ public class SerfClientIT {
     
     
     @Test
-    public void testMembers() throws SerfCommunicationException {
+    public void test1Members() throws SerfCommunicationException {
         logger.info("testMembers");
         System.out.println("testMembers");
         client1.join(ImmutableList.<String>of(SERF2_IP + ":" + SERF2_PORT), false);
@@ -76,7 +80,7 @@ public class SerfClientIT {
     }
     
     @Test
-    public void testFilteredMembers() throws SerfCommunicationException {
+    public void test2FilteredMembers() throws SerfCommunicationException {
         logger.info("testFilteredMembers");
         Map<String, String> expected = ImmutableMap.<String, String>builder().put("test-tag", "tag-value").build();
         
@@ -87,14 +91,14 @@ public class SerfClientIT {
     }
 
     @Test
-    public void testJoin() throws SerfCommunicationException {
+    public void test3Join() throws SerfCommunicationException {
         logger.info("join");
         JoinResponse response = client1.join(ImmutableList.<String>of(SERF2_IP + ":" + SERF2_PORT), false);
         assertEquals(1, response.getNum());
     }
     
     @Test
-    public void testSendAndReceiveEvent() throws SerfCommunicationException {
+    public void test4SendAndReceiveEvent() throws SerfCommunicationException {
         logger.info("testSendAndReceiveEvent");
         JoinResponse response = client1.join(ImmutableList.<String>of(SERF2_IP + ":" + SERF2_PORT), false);
         assertEquals(1, response.getNum());
@@ -126,25 +130,25 @@ public class SerfClientIT {
 //    }
     
     @Test
-    public void testCreateTags() throws SerfCommunicationException {
+    public void test5CreateTags() throws SerfCommunicationException {
         logger.info("testCreateTags");
         Map<String, String> expected = ImmutableMap.<String, String>of("test-tag", "tag-value");
         
         client1.tags(expected, ImmutableList.<String>of());
         
         MembersResponse membersFiltered = client1.membersFiltered(expected, "", "");
-        assertTrue(Maps.difference(expected, membersFiltered.getMembers().get(0).getTags()).areEqual());
+        assertTrue(Maps.difference(expected, membersFiltered.getMembers().get(0).getTags()).entriesInCommon().size() == 1);
     }
 
     @Test
-    public void testDeleteTags() throws SerfCommunicationException {
+    public void test6DeleteTags() throws SerfCommunicationException {
         logger.info("testDeleteTags");
         Map<String, String> tags = ImmutableMap.<String, String>builder().put("test-tag", "tag-value").build();
         List<String> deletedTags = ImmutableList.<String>of("test-tag");
         
         client1.tags(tags, ImmutableList.<String>of());
         MembersResponse membersFiltered1 = client1.membersFiltered(tags, "", "");
-        assertTrue(Maps.difference(tags, membersFiltered1.getMembers().get(0).getTags()).areEqual());
+        assertTrue(Maps.difference(tags, membersFiltered1.getMembers().get(0).getTags()).entriesInCommon().size() == 1);
         
         client1.tags(ImmutableMap.<String, String>of(), deletedTags);
         
@@ -153,7 +157,7 @@ public class SerfClientIT {
     }
 
     @Test
-    public void testLog() throws SerfCommunicationException {
+    public void test7Log() throws SerfCommunicationException {
         logger.info("testLog");
         JoinResponse response = client1.join(ImmutableList.<String>of(SERF2_IP + ":" + SERF2_PORT), false);
         
@@ -164,7 +168,7 @@ public class SerfClientIT {
     }
     
     @Test
-    public void testQueryResponse() throws SerfCommunicationException {
+    public void test8QueryResponse() throws SerfCommunicationException {
         logger.info("testQueryResponse");
 
         JoinResponse response = client1.join(ImmutableList.<String>of(SERF2_IP + ":" + SERF2_PORT), false);
@@ -198,14 +202,14 @@ public class SerfClientIT {
     }
 
     @Test
-    public void testStats() throws SerfCommunicationException {
+    public void test9Stats() throws SerfCommunicationException {
         logger.info("testStats");
 
         Map<String, String> expected = ImmutableMap.<String, String>of("teststat", "valstat");
         client1.tags(expected, ImmutableList.<String>of());
         StatsResponse statsResponse = client1.stats();
         assertTrue(Integer.valueOf(statsResponse.getStats().getSerf().getMembers()) > 0);
-        assertTrue(Maps.difference(expected, statsResponse.getStats().getTags()).areEqual());
+        assertTrue(Maps.difference(expected, statsResponse.getStats().getTags()).entriesInCommon().size() == 1);
     }
     
 }
